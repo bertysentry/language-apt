@@ -1,0 +1,431 @@
+'scopeName': 'source.apt'
+'name': 'APT'
+'fileTypes': ['apt']
+'patterns': [
+  {
+    name: 'header.apt'
+    begin: '^\\s*(--+)\\s*$'
+    beginCaptures:
+      1:
+        name: 'keyword.apt'
+    end: '^\\s*$'
+    patterns: [
+      {
+        include: '#header'
+      }
+    ]
+  }
+
+  {
+    name: 'body.apt'
+    begin: '^'
+    end: ''
+    patterns: [
+      {
+        include: '#body'
+      }
+    ]
+  }
+]
+
+##########################
+# Repository of patterns #
+##########################
+repository:
+
+  ###
+  # Header
+  ###
+  header:
+    patterns: [
+      {
+        name: 'keyword.apt'
+        match: '^\\s*(--+)\\s*$'
+      }
+      {
+        name: 'markup.heading.title.apt'
+        match: '^.*$'
+      }
+    ]
+
+  ###
+  # Body
+  ###
+  body:
+    patterns: [
+      {
+        include: '#escape'
+      }
+      {
+        include: '#blocks'
+      }
+      {
+        include: '#headings'
+      }
+      {
+        include: '#inline'
+      }
+    ]
+
+  ###
+  # Escaped and special chars
+  ###
+  escape:
+    patterns: [
+      # Escaped chars
+      {
+        name: 'constant.character.escape.apt'
+        match: '(\\\\~)|(\\\\=)|(\\\\-)|(\\\\\\+)|(\\\\\\*)|(\\\\\\[)|(\\\\\\])|(\\\\\\<)|(\\\\\\>)|(\\\\\\{)|(\\\\\\})|(\\\\\\\\)'
+      }
+
+      # Special chars
+      {
+        name: 'constant.character.apt'
+        match: '(\\\\[0-9]{1,3}\\b)|(\\\\x[0-9A-Fa-f]{2}\\b)|(\\\\u[0-9A-Fa-f]{4})'
+      }
+
+      # Force line break
+      {
+        name: 'keyword.apt'
+        match: '\\\\$'
+      }
+
+      # Un-breakable spaces
+      {
+        name: 'constant.character.escape.apt'
+        match: '\\\\ '
+      }
+    ]
+
+  ###
+  # Inline
+  ###
+  inline:
+    patterns: [
+
+      # Escaped chars
+      {
+        include: '#escape'
+      }
+
+      # Monospaced
+      {
+        name: 'markup.raw'
+        begin: '\\<\\<\\<'
+        beginCaptures:
+          0:
+            name: 'punctuation.apt'
+        end: '\\>\\>\\>'
+        endCaptures:
+          0:
+            name: 'punctuation.apt'
+        patterns: [
+          {
+            include: '#inline'
+          }
+        ]
+      }
+
+      # Bold
+      {
+        name: 'markup.bold'
+        begin: '\\<\\<'
+        beginCaptures:
+          0:
+            name: 'punctuation.apt'
+        end: '\\>\\>'
+        endCaptures:
+          0:
+            name: 'punctuation.apt'
+        patterns: [
+          {
+            include: '#inline'
+          }
+        ]
+      }
+
+      # Italic
+      {
+        name: 'markup.italic'
+        begin: '\\<'
+        beginCaptures:
+          0:
+            name: 'punctuation.apt'
+        end: '\\>'
+        endCaptures:
+          0:
+            name: 'punctuation.apt'
+        patterns: [
+          {
+            include: '#inline'
+          }
+        ]
+      }
+
+      # Links {{{url}text}}
+      {
+        name: 'markup.underline.link.apt'
+        match: '(\\{\\{\\{)(.+)(\\})(.+)(\\}\\})'
+        captures:
+          1:
+            name: 'punctuation.apt'
+          3:
+            name: 'punctuation.apt'
+            patterns: [
+              {
+                include: '#inline'
+              }
+            ]
+          4:
+            name: 'constant.string.apt'
+          5:
+            name: 'punctuation.apt'
+      }
+
+      # Links {{url}}
+      {
+        name: 'markup.underline.link.apt'
+        match: '(\\{\\{)(.+?)(\\}\\})'
+        captures:
+          1:
+            name: 'punctuation.apt'
+          3:
+            name: 'punctuation.apt'
+      }
+
+      # Anchors {Anchor}
+      {
+        name: 'markup.underline.anchor.link.apt'
+        match: '(\\{)(.+?)(\\})'
+        captures:
+          1:
+            name: 'punctuation.apt'
+          3:
+            name: 'punctuation.apt'
+      }
+
+      # Comments ~~
+      {
+        name: 'comment.line.apt'
+        match: '~~.*$'
+      }
+
+    ]
+
+  ###
+  # Headings
+  ###
+
+  headings:
+    patterns: [
+
+      # Comments
+      {
+        name: 'comment.line.apt'
+        match: '^~~.*$'
+      }
+
+      # Horizontal separator
+      {
+        name: 'keyword.apt'
+        match: '^===+\\s*$'
+      }
+
+      # Page break
+      {
+        name: 'keyword.apt'
+        match: '^\\^L\\s*$'
+      }
+
+      # Heading 2
+      {
+        match: '^\\*\\s+(\\S.*)$'
+        captures:
+          0:
+            name: 'markup.heading.heading-2.apt'
+            patterns: [
+              {
+                include: '#inline'
+              }
+            ]
+      }
+
+      # Heading 3
+      {
+        match: '^\\*\\*\\s+(\\S.*)$'
+        captures:
+          0:
+            name: 'markup.heading.heading-3.apt'
+            patterns: [
+              {
+                include: '#inline'
+              }
+            ]
+      }
+
+      # Heading 4
+      {
+        match: '^\\*\\*\\*\\s+(\\S.*)$'
+        captures:
+          0:
+            name: 'markup.heading.heading-4.apt'
+            patterns: [
+              {
+                include: '#inline'
+              }
+            ]
+      }
+
+      # Heading 5
+      {
+        match: '^\\*\\*\\*\\*\\s+(\\S.*)$'
+        captures:
+          0:
+            name: 'markup.heading.heading-4.apt'
+            patterns: [
+              {
+                include: '#inline'
+              }
+            ]
+      }
+
+      # Figures [figure]
+      {
+        name: 'markup.link.underline.apt'
+        match: '^\\[\\S+\\](.*)?\\s*$'
+        captures:
+          1:
+            name: 'constant.string.apt'
+            patterns: [
+              {
+                include: '#inline'
+              }
+            ]
+      }
+
+      # Heading 1
+      {
+        match: '^\\S.*$'
+        captures:
+          0:
+            name: 'markup.heading.heading-1.apt'
+            patterns: [
+              {
+                include: '#inline'
+              }
+            ]
+      }
+    ]
+
+  ###
+  # Blocks
+  ###
+
+  blocks:
+    patterns: [
+
+      # Verbatim +--- or ----
+      {
+        name: 'markup.raw.apt'
+        begin: '^([\\+\\-]--+\\+?)\\s*$'
+        beginCaptures:
+          0:
+            name: 'punctuation.apt'
+        end: '^\\1\\s*$'
+        endCaptures:
+          0:
+            name: 'punctuation.apt'
+      }
+
+      # Tables *---
+      {
+        name: 'table.apt'
+        begin: '^\\*(--+[\\+\\*:])+\\s*$'
+        beginCaptures:
+          0:
+            name: 'keyword.apt'
+        end: '^\\s*$'
+        patterns: [
+          {
+            match: '^\\*(--+[\\+\\*:])+\\s*$'
+            name: 'keyword.apt'
+          }
+          {
+            match: '\\|'
+            name: 'keyword.apt'
+          }
+          {
+            name: 'cell'
+            match: '[^|]+'
+            captures:
+              0:
+                patterns: [
+                  {
+                    include: '#inline'
+                  }
+                ]
+          }
+        ]
+      }
+
+      # Unordered lists *
+      {
+        name: 'markup.list.unnumbered.apt'
+        begin: '^\\s+(\\*)\\s'
+        beginCaptures:
+          1:
+            name: 'keyword.apt'
+        end: '(^\\s*$)|(^\\s*(\\[\\])\\s*$)'
+        endCaptures:
+          3:
+            name: 'keyword.apt'
+        patterns: [
+          {
+            include: '#inline'
+          }
+        ]
+      }
+
+      # End of lists
+      {
+        match: '^\\s*(\\[\\])\\s*$'
+        captures:
+          1:
+            name: 'keyword.apt'
+      }
+
+      # Ordered lists [[1]]
+      {
+        name: 'markup.list.numbered.apt'
+        begin: '^\\s+(\\[\\[)([0-9a-zA-Z]+)(\\]\\])\\s'
+        beginCaptures:
+          1:
+            name: 'keyword.apt'
+          2:
+            name: 'constant.numeric.apt'
+          3:
+            name: 'keyword.apt'
+        end: '(^\\s*$)|(^\\s*(\\[\\])\\s*$)'
+        endCaptures:
+          3:
+            name: 'keyword.apt'
+        patterns: [
+          {
+            include: '#inline'
+          }
+        ]
+      }
+
+      # Paragraphs
+      {
+        name: 'paragraph.apt'
+        begin: '^\\s+\\b'
+        end: '^\\s*$'
+        patterns: [
+          {
+            include: '#inline'
+          }
+        ]
+      }
+
+  ]

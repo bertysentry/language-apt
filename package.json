@@ -1,0 +1,23 @@
+{
+  "name": "language-apt",
+  "version": "0.0.0",
+  "description": "Support for the APT markup language in Atom",
+  "keywords": [
+    "apt",
+    "maven",
+    "doxia"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bertysentry/language-apt.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bertysentry/language-apt/issues"
+  },
+  "license": "MIT",
+  "engines": {
+    "atom": "*"
+  },
+  "dependencies": {
+  }
+}
