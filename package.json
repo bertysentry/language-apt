@@ -1,6 +1,6 @@
 {
   "name": "language-apt",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Support for the APT markup language in Atom",
   "keywords": [
     "apt",
@@ -18,6 +18,5 @@
   "engines": {
     "atom": "*"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
